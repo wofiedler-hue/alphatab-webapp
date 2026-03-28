@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>alphaTab Web App</title>
+
+<script type="module" src="./alphaTab.min.js"></script>
+
+<style>
+body { margin:0; font-family:Arial; background:#111; color:#fff; display:flex; flex-direction:column; height:100vh; }
+header { padding:10px; background:#1e1e1e; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+button,input { padding:8px; border-radius:6px; border:none; }
+button { background:#ff7a18; color:#fff; cursor:pointer; }
+#container { flex:1; background:#fff; color:#000; overflow:auto; padding:20px; }
+#alphaTab { width:100%; min-height:500px; }
+</style>
+</head>
+<body>
+
+<header>
+  <input type="file" id="fileInput">
+  <button id="loadSampleBtn">Sample</button>
+  <button id="playPauseBtn">Play/Pause</button>
+  <button id="stopBtn">Stop</button>
+  <span id="status">Kein Track</span>
+</header>
+
+<div id="container">
+  <div id="alphaTab"></div>
+</div>
+
+<script type="module">
+import { AlphaTabApi } from './alphaTab.min.js';
+
+let api = null;
+let ready = false;
+
+function setStatus(t) {
+  document.getElementById("status").innerText = t;
+}
+
+function init(options) {
+  const el = document.getElementById("alphaTab");
+  el.innerHTML = "";
+  ready = false;
+  setStatus("Lade...");
+
+  try {
+    const worker = new Worker('./alphaTab.worker.mjs', { type: 'module' });
+
+    api = new AlphaTabApi(el, {
+      ...options,
+      core: { worker },
+      player: {
+        enablePlayer: true,
+        soundFont: './sonivox.sf2'
+      }
+    });
+
+    api.scoreLoaded.on(() => {
+      ready = true;
+      setStatus("Geladen ✅");
+    });
+
+    api.error.on((e) => {
+      console.error("AlphaTab Error:", e);
+      setStatus("Fehler ❌");
+    });
+
+  } catch (err) {
+    console.error(err);
+    setStatus("Init Fehler ❌");
+  }
+}
+
+// Datei Upload
+document.getElementById("fileInput").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    init({ data: ev.target.result });
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+// Sample laden
+function loadSample() {
+  const sample = `\\title "Demo Song"\\n\\tempo 120\\n.\\n(0.0 1.0 2.0 3.0)|`;
+  init({ tex: true, data: sample });
+}
+
+// Play / Pause
+function playPause() {
+  if (!api || !ready) return;
+  api.playPause();
+}
+
+// Stop
+function stopPlayback() {
+  if (!api) return;
+  api.stop();
+}
+
+// Buttons verbinden
+document.getElementById("loadSampleBtn").addEventListener("click", loadSample);
+document.getElementById("playPauseBtn").addEventListener("click", playPause);
+document.getElementById("stopBtn").addEventListener("click", stopPlayback);
+
+console.log("⚠️ Alle Dateien müssen im gleichen Ordner liegen:");
+console.log("- alphaTab.min.js");
+console.log("- alphaTab.worker.mjs");
+console.log("- sonivox.sf2");
+</script>
+
+</body>
+</html>
