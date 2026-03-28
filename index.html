@@ -51,6 +51,7 @@ function initAlphaTab(options) {
   try {
     const worker = new Worker('./alphaTab.worker.mjs', { type:'module' });
 
+    // ⚠️ Kein import! AlphaTabApi ist global
     api = new alphaTab.AlphaTabApi(el, {
       ...options,
       core: { worker },
@@ -88,7 +89,7 @@ document.getElementById("fileInput").addEventListener("change", function(e) {
 // Sample laden
 function loadSample() {
   const sample = `\\title "Demo Song"\\n\\tempo 120\\n.\\n(0.0 1.0 2.0 3.0)|`;
-  initAlphaTab({ tex: true, data: sample });
+  initAlphaTab({ tex:true, data:sample });
 }
 
 // Play/Pause & Stop
