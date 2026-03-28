@@ -49,16 +49,15 @@ function initAlphaTab(options) {
   setStatus("Lade...");
 
   try {
+    // Worker aus demselben Ordner
     const worker = new Worker('./alphaTab.worker.mjs', { type:'module' });
 
-    // ⚠️ Kein import! AlphaTabApi ist global
+    // AlphaTabApi ist global verfügbar durch alphaTab.min.js
     api = new alphaTab.AlphaTabApi(el, {
       ...options,
       core: { worker },
       player: { enablePlayer:true, soundFont:'./sonivox.sf2' },
-      fonts: {
-        bravura: './Bravura.woff2'
-      }
+      fonts: { bravura: './Bravura.woff2' }
     });
 
     api.scoreLoaded.on(() => {
