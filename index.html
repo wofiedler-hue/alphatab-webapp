@@ -5,8 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AlphaTab Web App</title>
 
-<!-- AlphaTab Core (lokal) -->
+<!-- AlphaTab Core lokal -->
 <script src="./alphaTab.min.js"></script>
+
+<!-- Bravura Fonts via CDN (verhindert 404) -->
+<link rel="preload" href="https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.otf" as="font" type="font/otf" crossorigin>
 
 <style>
 body { margin:0; font-family:Arial,sans-serif; display:flex; flex-direction:column; height:100vh; background:#111; color:#fff; }
@@ -17,7 +22,7 @@ button:hover { opacity:0.85; }
 #container { flex:1; overflow:auto; padding:20px; background:#fff; color:black; }
 #alphaTab { max-width:1000px; margin:auto; }
 .controls { display:flex; gap:10px; align-items:center; }
-#status { margin-left:10px; font-weight:bold; }
+#status { margin-left:10px; font-weight:bold; color:#ff7a18; }
 </style>
 </head>
 <body>
@@ -49,18 +54,23 @@ function initAlphaTab(options) {
   setStatus("Lade...");
 
   try {
-    // Worker aus lokalem Verzeichnis
+    // Lokaler Worker
     const worker = new Worker('./alphaTab.worker.mjs', { type:'module' });
 
-    // AlphaTabApi global verfügbar durch alphaTab.min.js
+    // AlphaTab initialisieren
     api = new alphaTab.AlphaTabApi(el, {
       ...options,
       core: { worker },
       player: { enablePlayer:true, soundFont:'./sonivox.sf2' },
-      fonts: { bravura: './Bravura.woff2' } // lokal
+      fonts: {
+        bravura: {
+          woff2: 'https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.woff2',
+          woff: 'https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.woff',
+          otf: 'https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.otf'
+        }
+      }
     });
 
-    // Wenn Score geladen ist
     api.scoreLoaded.on(() => {
       ready = true;
       setStatus("Geladen ✅");
@@ -102,7 +112,6 @@ function stopPlayback() { if(api) api.stop(); }
 document.getElementById("loadSampleBtn").addEventListener("click", loadSample);
 document.getElementById("playPauseBtn").addEventListener("click", playPause);
 document.getElementById("stopBtn").addEventListener("click", stopPlayback);
-
 </script>
 
 </body>
