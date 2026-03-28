@@ -5,13 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AlphaTab Web App</title>
 
-<!-- AlphaTab Core lokal -->
 <script src="./alphaTab.min.js"></script>
-
-<!-- Fonts via CDN (keine 404) -->
-<link rel="preload" href="https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.woff" as="font" type="font/woff" crossorigin>
-<link rel="preload" href="https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.otf" as="font" type="font/otf" crossorigin>
 
 <style>
 body { margin:0; font-family:Arial,sans-serif; display:flex; flex-direction:column; height:100vh; background:#111; color:#fff; }
@@ -62,9 +56,9 @@ function initAlphaTab(options) {
       player: { enablePlayer:true, soundFont:'./sonivox.sf2' },
       fonts: {
         bravura: {
-          woff2: 'https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.woff2',
-          woff: 'https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.woff',
-          otf: 'https://unpkg.com/@coderline/alphatab@1.5.0/dist/fonts/Bravura.otf'
+          woff2: './Bravura.woff2',
+          woff: './Bravura.woff',
+          otf: './Bravura.otf'
         }
       }
     });
