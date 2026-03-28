@@ -55,7 +55,10 @@ function initAlphaTab(options) {
     api = new alphaTab.AlphaTabApi(el, {
       ...options,
       core: { worker },
-      player: { enablePlayer:true, soundFont:'./sonivox.sf2' }
+      player: { enablePlayer:true, soundFont:'./sonivox.sf2' },
+      fonts: {
+        bravura: './Bravura.woff2'
+      }
     });
 
     api.scoreLoaded.on(() => {
